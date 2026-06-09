@@ -1,0 +1,621 @@
+/* ─── Google Fonts (must be before @tailwind) ──────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400..800&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Custom Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #050811; }
+::-webkit-scrollbar-thumb { background: #00f5ff44; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00f5ff88; }
+
+/* ─── Base Styles ──────────────────────────────────────────────────────────── */
+/* FIX: box-sizing on everything prevents width overflows from padding */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* FIX: prevents iOS Safari bounce from causing layout width issues */
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: "Syne", sans-serif;
+  background-color: #050811;
+  color: #e2e8f0;
+  /* FIX: must be on body too; stops any child element from creating horizontal scroll */
+  overflow-x: hidden;
+  /* FIX: ensures body fills viewport on all devices */
+  min-width: 0;
+}
+
+/* ─── FIX: Prevent ALL images from overflowing their containers ─────────────── */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ─── Selection ────────────────────────────────────────────────────────────── */
+::selection {
+  background: #00f5ff33;
+  color: #00f5ff;
+}
+
+/* ─── Gradient Text ────────────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #00f5ff 0%, #7c3aed 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-cyan {
+  background: linear-gradient(135deg, #00f5ff, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glow Effects ─────────────────────────────────────────────────────────── */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3), 0 0 60px rgba(0, 245, 255, 0.1);
+}
+.glow-purple {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), 0 0 60px rgba(124, 58, 237, 0.15);
+}
+.text-glow {
+  text-shadow: 0 0 20px rgba(0, 245, 255, 0.6);
+}
+/* FIX: On very small screens the glow shadow was adding to layout width */
+@media (max-width: 480px) {
+  .text-glow {
+    text-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
+  }
+}
+
+/* ─── Grid Background ──────────────────────────────────────────────────────── */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(0, 245, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* ─── Glass Card ───────────────────────────────────────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-hover {
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-card-hover:hover {
+  background: rgba(0, 245, 255, 0.05);
+  border-color: rgba(0, 245, 255, 0.2);
+  transform: translateY(-6px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(0, 245, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ─── Animated Border Card ─────────────────────────────────────────────────── */
+.animated-border {
+  position: relative;
+}
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.0), rgba(0, 245, 255, 0.0));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+.animated-border:hover::before {
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.5), rgba(124, 58, 237, 0.4), rgba(244, 114, 182, 0.3));
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, #00f5ff, #0ea5e9);
+  color: #050811;
+  font-weight: 700;
+  /* FIX: use clamp for responsive padding instead of fixed px */
+  padding: 0.75rem 2rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+  /* FIX: prevents buttons from overflowing narrow screens */
+  white-space: nowrap;
+  max-width: 100%;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(0, 245, 255, 0.4), 0 8px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #00f5ff;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 245, 255, 0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  /* FIX: prevents button text from wrapping badly */
+  white-space: nowrap;
+  max-width: 100%;
+}
+.btn-outline:hover {
+  background: rgba(0, 245, 255, 0.08);
+  border-color: rgba(0, 245, 255, 0.7);
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* FIX: On very small screens, ensure buttons have enough breathing room */
+@media (max-width: 360px) {
+  .btn-primary,
+  .btn-outline {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* ─── Section Padding ──────────────────────────────────────────────────────── */
+/* FIX: Use clamp for fluid section padding that scales from mobile to desktop */
+.section-padding {
+  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 1.5rem);
+}
+/* Override kept for backward compatibility */
+@media (max-width: 768px) {
+  .section-padding { padding: 3.5rem 1rem; }
+}
+@media (max-width: 480px) {
+  .section-padding { padding: 3rem 0.875rem; }
+}
+
+/* ─── Nav Link ─────────────────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00f5ff, #7c3aed);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.nav-link:hover::after { width: 100%; }
+
+/* ─── Skill Bar ────────────────────────────────────────────────────────────── */
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #00f5ff, #7c3aed);
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.4);
+}
+
+/* ─── Spinner ──────────────────────────────────────────────────────────────── */
+.spinner {
+  border: 2px solid rgba(0, 245, 255, 0.15);
+  border-top-color: #00f5ff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ─── Animations ───────────────────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(-5px) rotate(-1deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 20s linear infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+.animate-fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+
+/* ─── 3D Hover Card Effect ─────────────────────────────────────────────────── */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+.card-3d:hover {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-4px);
+}
+/* FIX: Disable 3D transform on mobile – causes janky rendering */
+@media (max-width: 768px) {
+  .card-3d:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* ─── Accent green ─────────────────────────────────────────────────────────── */
+.bg-accent-green\/5 { background-color: rgba(16, 185, 129, 0.05); }
+.border-accent-green\/20 { border-color: rgba(16, 185, 129, 0.2); }
+.text-accent-green { color: #10b981; }
+.bg-accent-green { background-color: #10b981; }
+
+/* ─── Focus Ring ────────────────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid rgba(0, 245, 255, 0.5);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Responsive Card Hover ─────────────────────────────────────────────────── */
+/* FIX: reduce translateY on mobile to prevent layout shift in tight columns */
+@media (max-width: 640px) {
+  .glass-card-hover:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* ─── Social Icon Hover Brand Colors ──────────────────────────────────────── */
+[class*="social-"] {
+  transition: color 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+  display: inline-flex;
+}
+[class*="social-"]:hover { transform: scale(1.2); }
+
+.social-github:hover   { color: #ffffff !important; filter: drop-shadow(0 0 6px rgba(255,255,255,0.55)); }
+.social-linkedin:hover { color: #0A66C2 !important; filter: drop-shadow(0 0 6px rgba(10,102,194,0.7)); }
+.social-instagram:hover { color: #E1306C !important; filter: drop-shadow(0 0 6px rgba(225,48,108,0.7)); }
+.social-twitter:hover  { color: #1D9BF0 !important; filter: drop-shadow(0 0 6px rgba(29,155,240,0.7)); }
+.social-youtube:hover  { color: #FF0000 !important; filter: drop-shadow(0 0 6px rgba(255,0,0,0.6)); }
+.social-whatsapp:hover { color: #25D366 !important; filter: drop-shadow(0 0 6px rgba(37,211,102,0.6)); }
+.social-facebook:hover { color: #1877F2 !important; filter: drop-shadow(0 0 6px rgba(24,119,242,0.6)); }
+.social-email:hover    { color: #EA4335 !important; filter: drop-shadow(0 0 6px rgba(234,67,53,0.65)); }
+.social-behance:hover  { color: #1769FF !important; filter: drop-shadow(0 0 6px rgba(23,105,255,0.6)); }
+.social-dribbble:hover { color: #EA4C89 !important; filter: drop-shadow(0 0 6px rgba(234,76,137,0.6)); }
+
+/* ─── Tech Brand Colors ─────────────────────────────────────────────────────── */
+.tech-react       { color: #61DAFB; }
+.tech-nextjs      { color: #ffffff; }
+.tech-nodejs      { color: #339933; }
+.tech-express     { color: #ffffff; }
+.tech-mongodb     { color: #47A248; }
+.tech-firebase    { color: #FFCA28; }
+.tech-tailwind    { color: #06B6D4; }
+.tech-typescript  { color: #3178C6; }
+.tech-javascript  { color: #F7DF1E; }
+.tech-html        { color: #E34F26; }
+.tech-css         { color: #1572B6; }
+.tech-git         { color: #F05032; }
+.tech-github      { color: #ffffff; }
+.tech-docker      { color: #2496ED; }
+.tech-aws         { color: #FF9900; }
+.tech-vercel      { color: #ffffff; }
+.tech-figma       { color: #F24E1E; }
+.tech-postman     { color: #FF6C37; }
+.tech-graphql     { color: #E10098; }
+.tech-redis       { color: #DC382D; }
+.tech-postgresql  { color: #4169E1; }
+
+/* Tech badge hover */
+.tech-badge {
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255,255,255,0.08);
+  /* FIX: ensure badges wrap correctly and don't overflow */
+  word-break: keep-all;
+  white-space: nowrap;
+}
+.tech-badge:hover {
+  border-color: currentColor;
+  background: rgba(255,255,255,0.05);
+  box-shadow: 0 0 14px rgba(255,255,255,0.12), 0 0 6px currentColor;
+  opacity: 0.95;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE FIXES — Breakpoint-by-breakpoint
+   320px → 480px  : small phones (iPhone SE, Galaxy A series small)
+   481px → 768px  : large phones (iPhone 12/13/14, Pixel, Galaxy S)
+   769px → 1024px : tablets (iPad mini, iPad Air)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── FIX: Prevent absolute blobs from creating horizontal overflow ──────── */
+/* These large decorative blobs (-left-40, -right-40) overflow on mobile.    */
+/* Clip them at the section boundary instead.                                 */
+section, header, footer {
+  overflow-x: hidden;
+}
+
+/* ─── FIX: max-width containers must respect viewport on all screen widths ── */
+.max-w-7xl,
+.max-w-5xl,
+.max-w-2xl,
+.max-w-xl,
+.max-w-md {
+  width: 100%;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   NAVBAR RESPONSIVE FIXES
+   Issue: On 320–375px the logo and hamburger could collide because px-6 is
+   too wide relative to the viewport.
+   ────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Tighten navbar horizontal padding on very small screens */
+  .navbar-inner {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   HERO SECTION RESPONSIVE FIXES
+   Issues:
+   - text-5xl (3rem) on 320px causes "Mohamed Asif" to wrap mid-word or clip
+   - Fixed px-6 padding on narrow viewport leaves almost no text space
+   - TypeAnimation line has fixed h-12 that may clip on small screens
+   - Social icon row with gap-6 overflows on 320px
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* FIX: fluid hero heading — scales from 1.8rem on 320px up to 5rem on 1440px */
+.hero-title {
+  font-size: clamp(1.8rem, 7.5vw, 5rem);
+  line-height: 1.15;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  /* FIX: hyphens auto prevents mid-name breaks on extremely narrow screens */
+  hyphens: auto;
+}
+
+/* FIX: type animation container — auto height prevents clip */
+.hero-typewriter {
+  font-size: clamp(1.1rem, 4vw, 2.25rem);
+  min-height: 2.5rem;
+  height: auto;
+  line-height: 1.4;
+}
+
+/* FIX: hero subtitle text */
+.hero-subtitle {
+  font-size: clamp(0.9rem, 2.5vw, 1.125rem);
+}
+
+/* FIX: hero CTA buttons — stack on very narrow, side-by-side on 480px+ */
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  width: 100%;
+}
+.hero-cta-group > * {
+  /* On smallest screens, each button takes full width */
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 280px;
+}
+@media (min-width: 480px) {
+  .hero-cta-group > * {
+    flex: 0 0 auto;
+  }
+}
+
+/* FIX: hero social icons — wrap and reduce gap on small screens */
+.hero-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  row-gap: 0.5rem;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   ABOUT SECTION RESPONSIVE FIXES
+   Issues:
+   - Avatar ring decorations use absolute widths (w-64 h-64) — on 320px this
+     is 256px which leaves very little margin
+   - lg:grid-cols-2 collapses to 1 col on mobile — gap-16 becomes too large
+   - Stats grid (grid-cols-2) cards have text-3xl values that may clip
+   ────────────────────────────────────────────────────────────────────────── */
+.about-avatar-wrapper {
+  /* FIX: fluid avatar size — 200px min, 256px max, scales with viewport */
+  width: clamp(180px, 45vw, 256px);
+  height: clamp(180px, 45vw, 256px);
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* FIX: On mobile, reduce grid gap from gap-16 (4rem) to something tighter */
+@media (max-width: 1024px) {
+  .about-grid {
+    gap: 2.5rem !important;
+  }
+}
+@media (max-width: 640px) {
+  .about-grid {
+    gap: 2rem !important;
+  }
+}
+
+/* FIX: Stats card values — fluid font size */
+.stat-value {
+  font-size: clamp(1.5rem, 5vw, 1.875rem);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   SKILLS SECTION RESPONSIVE FIXES
+   Issues:
+   - md:grid-cols-2 is fine, but the glass-card p-8 (2rem padding) is too
+     wide on 320–480px phones; card content spills or creates scroll
+   - Tech badges have nowrap text — the flex-wrap container handles it but
+     the card's 2rem padding eats too much space on narrow screens
+   ────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .skills-card-padding {
+    padding: 1.25rem !important;
+  }
+}
+@media (min-width: 641px) and (max-width: 768px) {
+  .skills-card-padding {
+    padding: 1.5rem !important;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   PROJECTS SECTION RESPONSIVE FIXES
+   Issues:
+   - Filter tabs can overflow on 320px if category names are long
+   - lg:grid-cols-3 / md:grid-cols-2 is correct but on 320–375px even a
+     single column card has padding issues with p-6
+   ────────────────────────────────────────────────────────────────────────── */
+/* FIX: Filter tabs scrollable on very small screens */
+.projects-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  /* Safety valve: if wrapping still causes issues, allow horizontal scroll */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.25rem;
+}
+
+@media (max-width: 480px) {
+  .project-card-content {
+    padding: 1rem !important;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   CONTACT SECTION RESPONSIVE FIXES
+   Issues:
+   - Form card p-8 (2rem) is too wide on 320px — combined with border it
+     causes overflow
+   - sm:grid-cols-2 inside the form for name+email creates very narrow inputs
+     on 480px; fine on 640px+
+   - Contact info cards (flex items-center gap-4) can wrap badly on 320px
+   ────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .contact-form-padding {
+    padding: 1.25rem !important;
+  }
+  /* FIX: Force name+email fields to stack on small phones even though
+     the component uses sm:grid-cols-2 (sm = 640px in Tailwind, so this is
+     effectively overriding for anything below 640px — but we target <480 here
+     as a safety net for devices where sm breakpoint might vary) */
+}
+@media (max-width: 480px) {
+  .contact-name-email-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ─── Footer Responsive ─────────────────────────────────────────────────── */
+/* FIX: On very small screens, footer 3-column flex wraps awkwardly.
+   The flex-col md:flex-row is already correct; just ensure centered alignment
+   and gap is comfortable on 320px */
+@media (max-width: 480px) {
+  .footer-inner {
+    gap: 0.75rem;
+    text-align: center;
+  }
+  .footer-inner > * {
+    justify-content: center;
+  }
+}
+
+/* ─── Admin Dashboard Responsive ────────────────────────────────────────── */
+/* FIX: Admin header px-6 + the "Admin Dashboard" label hidden on md is
+   already handled, but on 320px px-6 is still too much */
+@media (max-width: 480px) {
+  .admin-header-inner {
+    padding-left: 0.875rem !important;
+    padding-right: 0.875rem !important;
+  }
+  .admin-main-inner {
+    padding-left: 0.875rem !important;
+    padding-right: 0.875rem !important;
+  }
+}
+
+/* FIX: Admin tab row — wraps fine with flex-wrap but needs smaller font on mobile */
+@media (max-width: 480px) {
+  .admin-tab-btn {
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* FIX: Project row buttons on mobile — stack them */
+@media (max-width: 480px) {
+  .admin-project-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* ─── Login Page Responsive ──────────────────────────────────────────────── */
+/* FIX: On 320px, the card p-8 combined with the container px-6 leaves
+   very little inner space for inputs. Reduce card padding on smallest screens. */
+@media (max-width: 480px) {
+  .login-card-padding {
+    padding: 1.25rem !important;
+  }
+}

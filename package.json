@@ -1,0 +1,16 @@
+{
+  "name": "mern-portfolio",
+  "version": "1.0.0",
+  "description": "MERN Stack Developer Portfolio — Full Stack Application",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "seed": "cd backend && node seed.js",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["MERN", "portfolio", "react", "nodejs", "mongodb"],
+  "author": "Your Name",
+  "license": "MIT"
+}
