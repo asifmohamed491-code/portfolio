@@ -23,45 +23,6 @@ import {
 } from '@heroicons/react/24/outline';
 import api from '../../utils/api';
 
-const SAMPLE_PROJECTS = [
-  {
-    _id: 'sample1',
-    title: 'E-Commerce Platform',
-    shortDescription: 'Full-stack shopping platform with real-time inventory and Stripe payments.',
-    description: 'A production-ready e-commerce platform built with MERN stack featuring real-time inventory management, Stripe payment integration, admin dashboard, and comprehensive order management.',
-    techStack: ['React', 'Node.js', 'MongoDB', 'Stripe', 'Redux'],
-    liveUrl: '#',
-    githubUrl: '#',
-    featured: true,
-    category: 'fullstack',
-    image: '',
-  },
-  {
-    _id: 'sample2',
-    title: 'AI Chat Application',
-    shortDescription: 'Real-time chat app with AI assistant, file sharing, and voice messages.',
-    description: 'Real-time messaging application with WebSocket support, AI-powered responses, file sharing, and end-to-end encryption.',
-    techStack: ['React', 'Socket.io', 'Express', 'OpenAI', 'MongoDB'],
-    liveUrl: '#',
-    githubUrl: '#',
-    featured: true,
-    category: 'fullstack',
-    image: '',
-  },
-  {
-    _id: 'sample3',
-    title: 'Task Management Dashboard',
-    shortDescription: 'Collaborative project management tool with drag-and-drop boards.',
-    description: 'Trello-like project management tool with drag-and-drop boards, team collaboration, progress tracking, and Slack integration.',
-    techStack: ['React', 'Node.js', 'PostgreSQL', 'Redis', 'Docker'],
-    liveUrl: '#',
-    githubUrl: '#',
-    featured: false,
-    category: 'web',
-    image: '',
-  },
-];
-
 const CATEGORY_FILTERS = ['All', 'fullstack', 'web', 'backend', 'mobile', 'other'];
 
 const TAG_COLORS = {
@@ -201,17 +162,18 @@ const ProjectCard = ({ project, index }) => {
 const ProjectsSection = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [filter, setFilter] = useState('All');
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const res = await api.get('/projects');
-        const data = res.data.data;
-        setProjects(data.length > 0 ? data : SAMPLE_PROJECTS);
+        setProjects(res.data.data);
+        setError(false);
       } catch (err) {
-        console.warn('Could not fetch projects, using samples:', err.message);
-        setProjects(SAMPLE_PROJECTS);
+        console.error('Could not fetch projects:', err.message);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -270,6 +232,10 @@ const ProjectsSection = () => {
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-12 h-12 spinner" />
+          </div>
+        ) : error ? (
+          <div className="col-span-full text-center py-16 text-slate-500 font-body">
+            Could not load projects. Please check your connection and try again.
           </div>
         ) : (
           <AnimatePresence mode="wait">

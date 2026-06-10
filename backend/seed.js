@@ -68,16 +68,25 @@ const seed = async () => {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio');
     console.log('✅ Connected to MongoDB');
 
-    // Clear existing data
-    await User.deleteMany({});
-    await Project.deleteMany({});
-    console.log('🗑️  Cleared existing data');
+    // ─── SAFETY GUARD: Never overwrite existing data ──────────────────────────
+    // If any users or projects already exist, abort immediately.
+    // To force a reseed, manually drop the collections in MongoDB first.
+    const existingUsers    = await User.countDocuments();
+    const existingProjects = await Project.countDocuments();
 
-    // Create admin
+    if (existingUsers > 0 || existingProjects > 0) {
+      console.log('⚠️  Database already contains data — seed aborted to protect real data.');
+      console.log(`   Users: ${existingUsers}, Projects: ${existingProjects}`);
+      console.log('   To force a reseed, manually drop the collections in MongoDB Atlas first.');
+      process.exit(0);
+    }
+    // ──────────────────────────────────────────────────────────────────────────
+
+    // Create admin (only runs on a completely empty DB)
     const admin = await User.create(ADMIN);
     console.log(`👤 Admin created: ${admin.email}`);
 
-    // Create projects
+    // Create sample projects (only runs on a completely empty DB)
     await Project.insertMany(SAMPLE_PROJECTS);
     console.log(`📦 Created ${SAMPLE_PROJECTS.length} sample projects`);
 
