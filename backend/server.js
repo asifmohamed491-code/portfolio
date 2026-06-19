@@ -4,9 +4,10 @@
  */
 
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+
+const connectDB = require('./config/db');
 
 const authRoutes    = require('./routes/auth');
 const projectRoutes = require('./routes/projects');
@@ -78,12 +79,12 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Start ────────────────────────────────────────────────────────────────────
+// CHANGED: connection logic now lives in config/db.js (pooled, reused,
+// auto-recovering) instead of an ad-hoc mongoose.connect() call here.
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
 
-mongoose.connect(MONGODB_URI)
+connectDB()
   .then(() => {
-    console.log('✅ MongoDB Connected');
     app.listen(PORT, () => {
       console.log(`✅ Server running at http://localhost:${PORT}/api`);
       console.log(`✅ CORS allowed origins: ${allowedOrigins.join(' | ')}`);

@@ -35,6 +35,10 @@ const deleteImageFromCloudinary = async (publicId) => {
 };
 
 // ─── Get All Projects (Public) ────────────────────────────────────────────────
+// CHANGED: added short-lived HTTP caching. This is public, low-frequency-change
+// data, so the browser (and any CDN in front of the API) can serve a cached
+// copy for 2 minutes and silently revalidate for up to 10 minutes after that,
+// instead of hitting MongoDB on every single page load.
 const getProjects = async (req, res) => {
   try {
     const { category, featured } = req.query;
@@ -45,6 +49,7 @@ const getProjects = async (req, res) => {
 
     const projects = await Project.find(filter).sort({ featured: -1, order: 1, createdAt: -1 });
 
+    res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
     res.json({
       success: true,
       count:   projects.length,
@@ -63,6 +68,7 @@ const getProject = async (req, res) => {
     if (!project) {
       return res.status(404).json({ success: false, message: 'Project not found.' });
     }
+    res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
     res.json({ success: true, data: project });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch project.' });

@@ -41,9 +41,11 @@ const uploadToCloudinary = (buffer) =>
   });
 
 // ─── GET /api/about/photo (public) ───────────────────────────────────────────
+// CHANGED: short cache window — same rationale as /api/projects.
 router.get('/photo', async (req, res) => {
   try {
     const meta = await SiteMeta.findOne({ key: 'about_photo' });
+    res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
     if (!meta || !meta.url) return res.json({ success: true, exists: false, url: null });
     res.json({ success: true, exists: true, url: meta.url, uploadedAt: meta.uploadedAt });
   } catch (err) {

@@ -18,7 +18,7 @@ import {
   DevicePhoneMobileIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
-import api from '../../utils/api';
+import { cachedGet } from '../../utils/api';
 
 const STATS = [
   { label: 'Projects Built', value: '8+' },
@@ -41,12 +41,23 @@ const AboutSection = () => {
   const [photoUrl, setPhotoUrl] = useState(null);
 
   useEffect(() => {
-    api.get('/about/photo')
-      .then(res => {
-        // url is always a full Cloudinary https:// URL
-        if (res.data?.exists && res.data.url) setPhotoUrl(res.data.url);
+    let cancelled = false;
+    // CHANGED: cachedGet — instant render from cache on repeat visits this
+    // session, silent background revalidation, retry on a cold backend.
+    cachedGet('/about/photo', {
+      ttl: 60000,
+      retries: 2,
+      onUpdate: (fresh) => {
+        if (!cancelled && fresh?.exists && fresh.url) setPhotoUrl(fresh.url);
+      },
+    })
+      .then((data) => {
+        if (!cancelled && data?.exists && data.url) setPhotoUrl(data.url);
       })
       .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
